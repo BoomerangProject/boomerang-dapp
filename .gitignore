@@ -59,3 +59,11 @@ typings/
 
 # next.js build output
 .next
+
+# zos sessions
+zos.dev-*
+
+# contracts build
+build
+
+.zos.session
