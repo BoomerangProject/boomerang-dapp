@@ -68,6 +68,16 @@ code {
   }
 }
 
+.dashboard {
+  width: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 0;
+
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

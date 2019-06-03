@@ -1,17 +1,18 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
-import 'openzeppelin-solidity/contracts/math/SafeMath.sol';
+import "openzeppelin-eth/contracts/math/SafeMath.sol";
+import "zos-lib/contracts/Initializable.sol";
 import "./interfaces/IBoomerang.sol";
 import "./BoomerangToken.sol";
 
-contract Boomerang is IBoomerang{
+contract Boomerang is IBoomerang, Initializable {
     using SafeMath for uint;
 
     BoomerangToken public boomToken;
     
     // Review information
 
-    uint public numReviews = 0;
+    uint public numReviews;
 
     mapping(uint => bool) public isActiveReview;
 
@@ -46,8 +47,9 @@ contract Boomerang is IBoomerang{
     
     mapping(address => mapping(address => uint)) public businessWorkerXp;
     
-    constructor (BoomerangToken _boomToken) public {
+    function initialize(BoomerangToken _boomToken) public initializer {
         boomToken = _boomToken;
+        numReviews = 0;
     }
     
     function requestWorkerReview(
@@ -57,9 +59,9 @@ contract Boomerang is IBoomerang{
         address _worker,
         uint _workerBoomReward,
         uint _workerXpReward,
-        string _txDetailsHash
+        string calldata _txDetailsHash
     ) 
-        public 
+        external 
     {
         require(isBusinessWorker[msg.sender][_worker] == 2, "Worker is not part of business.");
         require(msg.sender != _customer, "Message sender cannot be customer.");
@@ -80,7 +82,7 @@ contract Boomerang is IBoomerang{
         
         uint totalReward = _customerBoomReward.add(_workerBoomReward);
         require(
-            boomToken.transferFrom(msg.sender, this, totalReward), 
+            boomToken.transferFrom(msg.sender, address(this), totalReward), 
             "Not enough Boomerang tokens to request a review."
         );
         
@@ -94,7 +96,7 @@ contract Boomerang is IBoomerang{
         address _customer, 
         uint _customerBoomReward,
         uint _customerXpReward,
-        string _txDetailsHash
+        string memory _txDetailsHash
     ) 
         public 
     {
@@ -114,7 +116,7 @@ contract Boomerang is IBoomerang{
         reviewWorkerXpReward[numReviews] = 0;
         
         require(
-            boomToken.transferFrom(msg.sender, this, _customerBoomReward), 
+            boomToken.transferFrom(msg.sender, address(this), _customerBoomReward), 
             "Not enough Boomerang tokens to request a review."
         );
         
@@ -127,9 +129,9 @@ contract Boomerang is IBoomerang{
     function completeReview(
         uint _reviewId,
         uint _rating,
-        string _reviewHash
+        string calldata _reviewHash
     ) 
-        public 
+        external 
     {
         require(
             msg.sender == reviewCustomer[_reviewId], 
@@ -199,7 +201,7 @@ contract Boomerang is IBoomerang{
         emit ReviewCancelled(_reviewId);
     }
 
-    function reviseReview(uint _reviewId, uint _rating, string _reviewHash) public {
+    function reviseReview(uint _reviewId, uint _rating, string calldata _reviewHash) external {
         require(
             msg.sender == reviewCustomer[_reviewId],
             "You must be the writer of this review in order to revise."
@@ -215,12 +217,12 @@ contract Boomerang is IBoomerang{
         emit ReviewLiked(_reviewId, msg.sender);
     }
 
-    function addWorkerRequest(address _worker) {
+    function addWorkerRequest(address _worker) public {
         isBusinessWorker[msg.sender][_worker] = 1;
         emit AddWorkerRequested(msg.sender, _worker);
     }
 
-    function confirmWorkerRequest(address _business) {
+    function confirmWorkerRequest(address _business) public {
         require(
             isBusinessWorker[_business][msg.sender] == 1,
             "Can only confirm active add worker requests."
@@ -229,7 +231,7 @@ contract Boomerang is IBoomerang{
         emit AddWorkerConfirmed(_business, msg.sender);
     }
 
-    function removeWorker(address _business, address _worker) {
+    function removeWorker(address _business, address _worker) public {
         require(
             isBusinessWorker[_business][msg.sender] == 2 || isBusinessWorker[msg.sender][_worker] == 2,
             "Only the worker or business can remove a worker."
@@ -238,12 +240,8 @@ contract Boomerang is IBoomerang{
         emit WorkerRemoved(_business, _worker);
     }
 
-    function editProfile(string _profileHash) public {
+    function editProfile(string calldata _profileHash) external {
         emit ProfileEdited(msg.sender, _profileHash);
-    }
-
-    function isActiveReview(uint _reviewId) public view returns(bool isActive) {
-        return isActiveReview[_reviewId];
     }
 
     function getCustomerBoomReward(uint _reviewId) public view returns(uint boomReward) {

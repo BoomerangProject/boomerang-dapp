@@ -1,6 +1,7 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
-import "openzeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
+import "openzeppelin-eth/contracts/token/ERC20/ERC20.sol";
+import "zos-lib/contracts/Initializable.sol";
 
 /**
  * @title Boomerang Token
@@ -23,15 +24,13 @@ import "openzeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
  * All initial BOOM kutoas are assigned to the creator of this contract.
  *
  */
-contract BoomerangToken is StandardToken {
+contract BoomerangToken is Initializable, ERC20 {
     string public constant name = "Boomerang";
     string public constant symbol = "BOOM";
     uint8 public constant decimals = 18;
 
     uint256 public constant MAX_SUPPLY = 10 * (10**9) * (10 ** uint256(decimals));
-    constructor() public {
-        totalSupply_ = MAX_SUPPLY;
-        balances[msg.sender] = MAX_SUPPLY;
-        Transfer(0x0, msg.sender, MAX_SUPPLY);
+    function initialize() public initializer {
+    	_mint(msg.sender, MAX_SUPPLY);
     }
 }

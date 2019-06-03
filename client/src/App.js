@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import getWeb3, { getGanacheWeb3 } from "./utils/getWeb3";
 import Web3Info from "./components/Web3Info/index.js";
-import { Loader } from 'rimble-ui';
-
+import Header from "./components/Header.js";
+import BusinessDashboard from "./components/BusinessDashboard.js";
+import CustomerDashboard from "./components/CustomerDashboard.js";
+import { Loader, ToastMessage } from 'rimble-ui';
 import styles from './App.module.scss';
 
 class App extends Component {
@@ -11,7 +13,9 @@ class App extends Component {
     web3: null,
     accounts: null,
     contract: null,
-    route: window.location.pathname.replace("/","")
+    route: window.location.pathname.replace("/",""),
+    boomBalance: 0,
+    approvedFunds: false
   };
 
   getGanacheAddresses = async () => {
@@ -25,6 +29,16 @@ class App extends Component {
   }
 
   componentDidMount = async () => {
+
+    let Boomerang = {};
+    let BoomerangToken = {};
+    try {
+      Boomerang = require("../../contracts/Boomerang.sol");
+      BoomerangToken = require("../../contracts/BoomerangToken.sol");
+    } catch (e) {
+      console.log(e);
+    }
+
     try {
       const isProd = process.env.NODE_ENV === 'production';
       if (!isProd) {
@@ -38,6 +52,49 @@ class App extends Component {
         const isMetaMask = web3.currentProvider.isMetaMask;
         let balance = accounts.length > 0 ? await web3.eth.getBalance(accounts[0]): web3.utils.toWei('0');
         balance = web3.utils.fromWei(balance, 'ether');
+
+        let boomerangInstance = null;
+        let boomerangAddress = null;
+        let tokenInstance = null;
+        let tokenAddress = null;
+
+        let deployedNetwork = null;
+        if (Boomerang.networks) {
+          deployedNetwork = Boomerang.networks[networkId.toString()];
+          if (deployedNetwork) {
+            boomerangInstance = new web3.eth.Contract(
+              Boomerang.abi,
+              deployedNetwork && deployedNetwork.address,
+            );
+            boomerangAddress = deployedNetwork.address;
+          }
+        }
+        if (BoomerangToken.networks) {
+          deployedNetwork = BoomerangToken.networks[networkId.toString()];
+          if (deployedNetwork) {
+            tokenInstance = new web3.eth.Contract(
+              BoomerangToken.abi,
+              deployedNetwork && deployedNetwork.address,
+            );
+            tokenAddress = deployedNetwork.address;
+          }
+        }
+
+        if (boomerangInstance || tokenInstance) {
+
+          // Set web3, accounts, and contract to the state, and then proceed with an
+          // example of interacting with the contract's methods.
+          this.setState({ web3, ganacheAccounts, accounts, balance, networkId,
+            isMetaMask, boomerang: boomerangInstance, boomerangAddress: boomerangAddress, 
+            boomerangToken: tokenInstance, tokenAddress: tokenAddress}, () => {
+              this.refreshValues(boomerangInstance, tokenInstance);
+              setInterval(() => {
+                this.refreshValues(boomerangInstance, tokenInstance);
+              }, 1000);
+            });
+        }
+
+
         this.setState({ web3, ganacheAccounts, accounts, balance, networkId, isMetaMask });
       }
     } catch (error) {
@@ -49,10 +106,74 @@ class App extends Component {
     }
   };
 
+  refreshValues = (boomerangInstance, tokenInstance) => {
+    if (tokenInstance) {
+      this.getBoomBalance();
+      if (!this.state.approvedFunds) {
+        this.checkApprovedFunds();
+      }
+    }
+    if (boomerangInstance) {
+      this.getReviewRequests();
+    }
+  }
+
+
+
   componentWillUnmount() {
     if (this.interval) {
       clearInterval(this.interval);
     }
+  }
+
+  getBoomBalance = async () => {
+    const { boomerangToken } = this.state;
+    // Get the value from the contract to prove it worked.
+    const response = await boomerangToken.methods.balanceOf(this.state.accounts[0]).call();
+    // Update state with the result.
+    this.setState({ boomBalance: this.state.web3.utils.fromWei(response) });
+  }
+
+  checkApprovedFunds = async () => {
+    const { boomerangToken, boomerangAddress } = this.state;
+    // Get the value from the contract to prove it worked.
+    const allowance = await boomerangToken.methods.allowance(this.state.accounts[0], boomerangAddress).call();
+    if (allowance > 0) {
+      console.log(allowance);
+      this.setState({ approvedFunds: true });
+    }
+  }
+
+  getReviewRequests = async () => {
+    const { boomerang } = this.state;
+
+
+    let completedReviewIds = []
+    await boomerang.getPastEvents('ReviewCompleted', {
+      fromBlock: 0,
+      toBlock: 'latest'
+    }, async (err, events) => {
+      for (var i=0; i<events.length;i++) {
+        if (events[i].returnValues.customer === this.state.accounts[0]) {
+          completedReviewIds.push(events[i].returnValues.reviewId);
+        }
+      }
+    })
+
+    let newReviews = [];
+    boomerang.getPastEvents('ReviewRequested', {
+      fromBlock: 0,
+      toBlock: 'latest'
+    }, async (err, events) => {
+      for (var i=0; i<events.length;i++) {
+        if (events[i].returnValues.customer === this.state.accounts[0]) {
+          if (!completedReviewIds.includes(events[i].returnValues.reviewId)) {
+            newReviews.push(events[i]);
+          }
+        }
+      }
+      this.setState({ reviewRequests: newReviews });
+    })
   }
 
   renderLoader() {
@@ -65,16 +186,54 @@ class App extends Component {
     );
   }
 
+  renderHome() {
+    return (
+      <div className={styles.loader}>
+        <Loader size="80px" color="red" />
+        <h3> Loading Web3, accounts, and contract...</h3>
+        <p> Unlock your metamask </p>
+      </div>
+    );
+  }
+
+  renderDashboard() {
+    return (
+      <div className={styles.dashboard}>
+        <CustomerDashboard 
+          web3={this.state.web3}
+          boomerang={this.state.boomerang} 
+          reviewRequests={this.state.reviewRequests} 
+          accounts={this.state.accounts} />
+      </div>
+    );
+  }
+
+  renderBusinessDashboard() {
+    return (
+      <div className={styles.dashboard}>
+        <BusinessDashboard 
+          web3={this.state.web3}
+          boomerang={this.state.boomerang} 
+          boomerangAddress={this.state.boomerangAddress} 
+          boomerangToken={this.state.boomerangToken} 
+          accounts={this.state.accounts}
+          approvedFunds={this.state.approvedFunds} />
+      </div>
+    );
+  }
+
   render() {
     if (!this.state.web3) {
       return this.renderLoader();
     }
     return (
       <div className={styles.App}>
-        <h1>Good to Go!</h1>
-        <p>Zepkit has created your app.</p>
-        <h2>See your web3 info below:</h2>
-        <Web3Info {...this.state} />
+        <ToastMessage.Provider ref={node => (window.toastProvider = node)} />
+        <Header boomBalance = {this.state.boomBalance}/>
+        {this.state.route === '' && this.renderHome()}
+        {this.state.route === 'home' && this.renderHome()}
+        {this.state.route === 'dashboard' && this.renderDashboard()}
+        {this.state.route === 'business-dashboard' && this.renderBusinessDashboard()}
       </div>
     );
   }

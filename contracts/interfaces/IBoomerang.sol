@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.0;
 
 /**
  * @title Boomerang Interface
@@ -22,8 +22,8 @@ interface IBoomerang {
         address _worker,
         uint _workerBoomReward,
         uint _workerXpReward,
-        string _txDetailsHash
-    ) public;
+        string calldata _txDetailsHash
+    ) external;
 
     /// @notice Complete a review request with review information and modifies user and worker xp mapping (emits ReviewCompleted event)
     /// @param _reviewId The review ID of the review being completed.
@@ -32,26 +32,26 @@ interface IBoomerang {
     function completeReview(
         uint _reviewId,
         uint _rating,
-        string _reviewHash
-    ) public;
+        string calldata _reviewHash
+    ) external;
     
     /// @notice Cancel's a review (emits ReviewCancelled event)
     /// @param _reviewId The review ID of the review being cancelled.
-    function cancelReview(uint _reviewId) public;
+    function cancelReview(uint _reviewId) external;
     
     /// @notice Revise a review (emits ReviewRevised event)
     /// @param _reviewId The review ID of the review being revised.
     /// @param _rating The revised rating.
     /// @param _reviewHash the revised hash of the customers typed review.
-    function reviseReview(uint _reviewId, uint _rating, string _reviewHash) public;
+    function reviseReview(uint _reviewId, uint _rating, string calldata _reviewHash) external;
     
     /// @notice Like a review (emits ReviewLiked event)
     /// @param _reviewId The review ID of the review being liked.
-    function likeReview(uint _reviewId) public;
+    function likeReview(uint _reviewId) external;
     
     /// @notice Edits user's Boomerang profile (emits ProfileEdited event)
     /// @param _profileHash The hash of the profile edit.
-    function editProfile(string _profileHash) public;
+    function editProfile(string calldata _profileHash) external;
     
     // solhint-disable-next-line no-simple-event-func-name
     event ReviewRequested(

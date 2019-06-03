@@ -2,5 +2,8 @@
   "zosversion": "2.2",
   "name": "boomerang",
   "version": "0.1.0",
-  "contracts": {}
+  "contracts": {
+    "Boomerang": "Boomerang",
+    "BoomerangToken": "BoomerangToken"
+  }
 }
