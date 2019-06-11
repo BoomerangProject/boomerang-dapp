@@ -15,7 +15,8 @@ class App extends Component {
     contract: null,
     route: window.location.pathname.replace("/",""),
     boomBalance: 0,
-    approvedFunds: false
+    approvedFunds: false,
+    reviewRequests: []
   };
 
   getGanacheAddresses = async () => {
