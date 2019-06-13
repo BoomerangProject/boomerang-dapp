@@ -31,7 +31,14 @@ const getWeb3 = () =>
         );
         const web3 = new Web3(provider);
         console.log("No web3 instance injected, using Infura/Local web3.");
-        resolve(web3);
+        // Load in Torus
+        const script = document.createElement("script");
+        script.src = "https://app.tor.us/v2/embed.min.js";
+        //script.integrity = 'sha384-9pVNgURK8ieV/lOOoxoHAP5Jv3fE5gSa2SRc+2Y0fA+sxkUx8ZhEn/2tkqU533bX';
+        script.crossorigin = 'anonymous';
+
+        document.body.appendChild(script);
+        resolve(web3)
       }
     });
   });
