@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import { ToastMessage } from 'rimble-ui';
 import { Card, Form, Icon, Button, TextArea } from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 
@@ -8,7 +7,8 @@ class ReviewRequestItem extends Component {
     super(props);
     this.state = {
       boomReward: 0,
-      xpReward: 0
+      xpReward: 0,
+      reviewText: ''
     };
     this.reviewId = this.props.reviewRequest.returnValues.reviewId;
     this.txDetails = this.props.reviewRequest.returnValues.txDetailsHash;
@@ -22,7 +22,7 @@ class ReviewRequestItem extends Component {
   }
 
   submitReview = async (rating) => {
-    let tx = await this.props.boomerang.methods.completeReview(this.reviewId, rating, 'was cool').send({ from: this.props.accounts[0] });
+    let tx = await this.props.boomerang.methods.completeReview(this.reviewId, rating, this.state.reviewText).send({ from: this.props.accounts[0] });
     window.toastProvider.addMessage('Processing transaction...', {
       secondaryMessage: 'Check progress on Etherscan',
       actionHref:
@@ -44,6 +44,11 @@ class ReviewRequestItem extends Component {
     this.submitReview('2')
   };
 
+  updateReviewText(event) {
+    const reviewText = event.target.value;
+    this.setState({reviewText: reviewText});
+  }
+
   render() {
     return (
       <Card fluid>
@@ -55,7 +60,7 @@ class ReviewRequestItem extends Component {
         </Card.Content>
         <Card.Content>
           <Card.Description>
-            You will receive: <br /> <strong> {this.state.boomReward} BOOM <br /> 5 xp </strong> with <strong>{this.business}</strong>
+            You will receive: <br /> <strong> {this.state.boomReward} BOOM <br /> {this.state.xpReward} xp </strong> with <strong>{this.business}</strong>
           </Card.Description>
         </Card.Content>
         <Card.Content>
@@ -63,7 +68,7 @@ class ReviewRequestItem extends Component {
             Leave a review of your interaction here (optional)
           </Card.Description>
           <Form>
-            <TextArea />
+            <TextArea onChange={(event) => this.updateReviewText(event)} />
           </Form>
         </Card.Content>
         <Card.Content extra>

@@ -6,7 +6,9 @@ import { Header,
         Form,
         Input,
         Button,
-        TextArea
+        TextArea,
+        Accordion,
+        Icon
 } from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 
@@ -19,7 +21,8 @@ export default class BusinessDashboard extends Component {
       txDetails: '',
       customerAddress: '0x0000000000000000000000000000000000000000',
       customerBoomReward: '0',
-      customerXpReward: '0'
+      customerXpReward: '0',
+      activeIndex: 99
     };
     this.boomerangAddress = this.props.boomerangAddress;
     this.boomerang = this.props.boomerang;
@@ -70,10 +73,18 @@ export default class BusinessDashboard extends Component {
     console.log(this.props.web3.utils.toWei(boomReward))
   }
 
+  handleAccordionClick = (e, titleProps) => {
+    const { index } = titleProps
+    const { activeIndex } = this.state
+    const newIndex = activeIndex === index ? -1 : index
+
+    this.setState({ activeIndex: newIndex })
+  }
+
   render() {
+    const { activeIndex } = this.state
     return (
       <div>
-        <ToastMessage.Provider ref={node => (window.toastProvider = node)} />
         <Header as='h1'> Business Dashboard
         <Header.Subheader>Request reviews from your customers</Header.Subheader>
         </Header>
@@ -89,29 +100,46 @@ export default class BusinessDashboard extends Component {
           </Form>
         </div>
         <div hidden={!this.props.approvedFunds}>
-          <Form>
-            <Segment>
-              <Header as='h3'>Review Request Form</Header>
-              <Form.Field onChange={(event) => this.updateCustomerAddress(event)} control={Input} label='Customer Address' placeholder='0x0000000000...' />
+          <Accordion fluid styled>
+            <Accordion.Title active={activeIndex === 0} index={0} onClick={this.handleAccordionClick}>
+              <Icon name='dropdown' />
+              Request Business Review
+            </Accordion.Title>
+            <Accordion.Content active={activeIndex === 0}>
+              <Form>
+                <Segment>
+                  <Header as='h3'>Review Request Form</Header>
+                  <Form.Field onChange={(event) => this.updateCustomerAddress(event)} control={Input} label='Customer Address' placeholder='0x0000000000...' />
 
-              <Divider section />
+                  <Divider section />
 
-              <Form.Field onChange={(event) => this.updateCustomerBoomReward(event)} type="number" control={Input} label='BOOM Reward' placeholder='0' />
+                  <Form.Field onChange={(event) => this.updateCustomerBoomReward(event)} type="number" control={Input} label='BOOM Reward' placeholder='0' />
 
-              <Divider section />
+                  <Divider section />
 
-              <Form.Field onChange={(event) => this.updateCustomerXpReward(event)}  type="number" control={Input} label='XP Reward' placeholder='0' />
+                  <Form.Field onChange={(event) => this.updateCustomerXpReward(event)}  type="number" control={Input} label='XP Reward' placeholder='0' />
 
-              <Divider section />
+                  <Divider section />
 
-              <Form.Field onChange={(event) => this.updateTxDetails(event)} control={TextArea} label='Transaction Details' placeholder='Bought a digital asset from our store...' />
+                  <Form.Field onChange={(event) => this.updateTxDetails(event)} control={TextArea} label='Transaction Details' placeholder='Bought a digital asset from our store...' />
 
-              <Divider section />
+                  <Divider section />
 
-              <Form.Field control={Button} onClick={this.requestReview}>Submit</Form.Field>
-            </Segment>
-          </Form>
+                  <Form.Field control={Button} onClick={this.requestReview}>Submit</Form.Field>
+                </Segment>
+              </Form>
+            </Accordion.Content>
+            <Accordion.Title active={activeIndex === 1} index={1} onClick={this.handleAccordionClick}>
+              <Icon name='dropdown' />
+              Request Worker Review
+            </Accordion.Title>
+            <Accordion.Title active={activeIndex === 2} index={2} onClick={this.handleAccordionClick}>
+              <Icon name='dropdown' />
+              Add Worker
+            </Accordion.Title>
+          </Accordion>
         </div>
+        <ToastMessage.Provider ref={node => (window.toastProvider = node)} />
       </div>
     )
   }

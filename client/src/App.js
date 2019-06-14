@@ -232,8 +232,8 @@ class App extends Component {
       <div className={styles.App}>
         <ToastMessage.Provider ref={node => (window.toastProvider = node)} />
         <Header boomBalance = {this.state.boomBalance}/>
-        {this.state.route === '' && this.renderHome()}
-        {this.state.route === 'home' && this.renderHome()}
+        {this.state.route === '' && this.renderDashboard()}
+        {this.state.route === 'home' && this.renderDashboard()}
         {this.state.route === 'dashboard' && this.renderDashboard()}
         {this.state.route === 'business-dashboard' && this.renderBusinessDashboard()}
       </div>
