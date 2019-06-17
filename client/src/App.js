@@ -4,8 +4,11 @@ import Web3Info from "./components/Web3Info/index.js";
 import Header from "./components/Header.js";
 import BusinessDashboard from "./components/BusinessDashboard.js";
 import CustomerDashboard from "./components/CustomerDashboard.js";
+import Profile from "./components/Profile.js";
 import { Loader, ToastMessage } from 'rimble-ui';
 import styles from './App.module.scss';
+
+const urlParams = new URLSearchParams(window.location.search);
 
 class App extends Component {
   state = {
@@ -14,6 +17,7 @@ class App extends Component {
     accounts: null,
     contract: null,
     route: window.location.pathname.replace("/",""),
+    option:  urlParams.get('address'),
     boomBalance: 0,
     approvedFunds: false,
     reviewRequests: []
@@ -141,7 +145,6 @@ class App extends Component {
     // Get the value from the contract to prove it worked.
     const allowance = await boomerangToken.methods.allowance(this.state.accounts[0], boomerangAddress).call();
     if (allowance > 0) {
-      console.log(allowance);
       this.setState({ approvedFunds: true });
     }
   }
@@ -224,6 +227,14 @@ class App extends Component {
     );
   }
 
+  renderProfile() {
+    return (
+      <div className={styles.dashboard}>
+        <Profile address={this.state.option} />
+      </div>
+    );
+  }
+
   render() {
     if (!this.state.web3) {
       return this.renderLoader();
@@ -231,11 +242,12 @@ class App extends Component {
     return (
       <div className={styles.App}>
         <ToastMessage.Provider ref={node => (window.toastProvider = node)} />
-        <Header boomBalance = {this.state.boomBalance}/>
+        <Header boomBalance = {this.state.boomBalance} address={this.state.accounts[0]}/>
         {this.state.route === '' && this.renderDashboard()}
         {this.state.route === 'home' && this.renderDashboard()}
         {this.state.route === 'dashboard' && this.renderDashboard()}
         {this.state.route === 'business-dashboard' && this.renderBusinessDashboard()}
+        {this.state.route === 'profile' && this.renderProfile()}
       </div>
     );
   }
