@@ -230,7 +230,7 @@ class App extends Component {
   renderProfile() {
     return (
       <div className={styles.dashboard}>
-        <Profile address={this.state.option} />
+        <Profile web3={this.state.web3} address={this.state.option} boomerang={this.state.boomerang} />
       </div>
     );
   }
