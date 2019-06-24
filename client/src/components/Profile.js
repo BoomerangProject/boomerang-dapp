@@ -7,7 +7,12 @@ export default class Profile extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { activeItem: 'profile', activeReviewItem: 'incoming' }
+    this.state = { 
+      activeItem: 'profile', 
+      activeReviewItem: 'incoming',
+      completedIncomingReviews: [],
+      completedIncomingReviews: []
+      }
     this.address = this.props.address;
     this.boomerang = this.props.boomerang;
   }
@@ -41,10 +46,22 @@ export default class Profile extends Component {
         completedIncomingReviews: completedIncomingReviews.reverse(), 
         completedOutgoingReviews: completedOutgoingReviews.reverse() 
       });
-      console.log(completedIncomingReviews);
-      console.log(completedOutgoingReviews);
+      this.calculatePositivePercent(completedIncomingReviews);
     });
   }
+
+  calculatePositivePercent = async (completedIncomingReviews) => {
+    var numPositive = 0;
+    for (var i=0; i<completedIncomingReviews.length; i++) {
+      if (completedIncomingReviews[i].returnValues.rating === '2') {
+        numPositive++;
+      }
+    }
+    var result = (numPositive * 100) / completedIncomingReviews.length;
+    this.setState({
+      positivePercent: result.toFixed(0)
+    });
+  };
 
   render() {
     const { activeItem, activeReviewItem } = this.state
@@ -77,12 +94,11 @@ export default class Profile extends Component {
       <div hidden={this.state.activeItem !== 'profile'}>
         <Header as='h1'>   Your Profile (Unnamed)</Header>
         <Header.Subheader>{this.address}</Header.Subheader>
-        <Header.Subheader><font color="green">100% </font>positive feedback from 0 reviews</Header.Subheader>
       </div>
       <div hidden={this.state.activeItem !== 'reviews'}>
         <Header as='h1'> Business Reviews </Header>
         <Header.Subheader>{this.address}</Header.Subheader>
-        <Header.Subheader><font color="green">100% </font>positive feedback from 0 reviews</Header.Subheader>
+        <Header.Subheader><font color="green">{this.state.positivePercent}% </font>positive feedback from {this.state.completedIncomingReviews.length} reviews</Header.Subheader>
         <Menu widths={2} fluid>
           <Menu.Item 
             name='incoming' 
