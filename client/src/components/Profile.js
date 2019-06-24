@@ -24,19 +24,26 @@ export default class Profile extends Component {
   };
 
   getCompletedReviews = async () => {
-    let completedReviews = []
+    let completedIncomingReviews = []
+    let completedOutgoingReviews = []
     await this.boomerang.getPastEvents('ReviewCompleted', {
       fromBlock: 0,
       toBlock: 'latest'
     }, async (err, events) => {
       for (var i=0; i<events.length;i++) {
         if (events[i].returnValues.business === this.props.address) {
-          completedReviews.push(events[i]);
+          completedIncomingReviews.push(events[i]);
+        } else if (events[i].returnValues.customer === this.props.address) {
+          completedOutgoingReviews.push(events[i]);
         }
       }
-    })
-    this.setState({ completedReviews: completedReviews.reverse() });
-    console.log(completedReviews);
+      this.setState({
+        completedIncomingReviews: completedIncomingReviews.reverse(), 
+        completedOutgoingReviews: completedOutgoingReviews.reverse() 
+      });
+      console.log(completedIncomingReviews);
+      console.log(completedOutgoingReviews);
+    });
   }
 
   render() {
@@ -88,9 +95,10 @@ export default class Profile extends Component {
           />
         </Menu>
         <div hidden={this.state.activeReviewItem !== 'incoming'}>
-          <CompletedReviewList boomerang={this.props.boomerang} completedReviews={this.state.completedReviews} />
+          <CompletedReviewList type='incoming' boomerang={this.props.boomerang} completedReviews={this.state.completedIncomingReviews} />
         </div>
         <div hidden={this.state.activeReviewItem !== 'outgoing'}>
+          <CompletedReviewList type='outgoing' boomerang={this.props.boomerang} completedReviews={this.state.completedOutgoingReviews} />
         </div>
       </div>
       </div>

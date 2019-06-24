@@ -7,7 +7,7 @@ const CompletedReviewList = ((props) => {
   let completedReviews = [];
   if (props.completedReviews) {
     completedReviews = props.completedReviews.map((completedReview) => {
-      return <CompletedReviewItem key={completedReview.id} accounts={props.accounts} web3={props.web3} boomerang={props.boomerang} completedReview={completedReview} />
+      return <CompletedReviewItem key={completedReview.id} accounts={props.accounts} web3={props.web3} boomerang={props.boomerang} type={props.type} completedReview={completedReview} />
     })
   }
 

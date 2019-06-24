@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import getWeb3, { getGanacheWeb3 } from "./utils/getWeb3";
-import Web3Info from "./components/Web3Info/index.js";
 import Header from "./components/Header.js";
 import BusinessDashboard from "./components/BusinessDashboard.js";
 import CustomerDashboard from "./components/CustomerDashboard.js";
