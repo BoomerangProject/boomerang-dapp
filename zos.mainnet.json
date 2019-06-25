@@ -1,0 +1,317 @@
+{
+  "contracts": {
+    "Boomerang": {
+      "address": "0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab",
+      "constructorCode": "608060405234801561001057600080fd5b5061377a806100206000396000f3fe",
+      "bodyBytecodeHash": "3cf1fd70ec45613a6b469ee1de80136122a1044b337b09a09d9485ee0e074f8c",
+      "localBytecodeHash": "359b03b8649b0237e1d7b140454af5101731ffa03877e4f32180923896fc4431",
+      "deployedBytecodeHash": "359b03b8649b0237e1d7b140454af5101731ffa03877e4f32180923896fc4431",
+      "types": {
+        "t_bool": {
+          "id": "t_bool",
+          "kind": "elementary",
+          "label": "bool"
+        },
+        "t_uint256": {
+          "id": "t_uint256",
+          "kind": "elementary",
+          "label": "uint256"
+        },
+        "t_array:50<t_uint256>": {
+          "id": "t_array:50<t_uint256>",
+          "valueType": "t_uint256",
+          "length": "50",
+          "kind": "array",
+          "label": "uint256[50]"
+        },
+        "t_address": {
+          "id": "t_address",
+          "kind": "elementary",
+          "label": "address"
+        },
+        "t_mapping<t_bool>": {
+          "id": "t_mapping<t_bool>",
+          "valueType": "t_bool",
+          "label": "mapping(key => bool)",
+          "kind": "mapping"
+        },
+        "t_mapping<t_uint256>": {
+          "id": "t_mapping<t_uint256>",
+          "valueType": "t_uint256",
+          "label": "mapping(key => uint256)",
+          "kind": "mapping"
+        },
+        "t_mapping<t_address>": {
+          "id": "t_mapping<t_address>",
+          "valueType": "t_address",
+          "label": "mapping(key => address)",
+          "kind": "mapping"
+        }
+      },
+      "storage": [
+        {
+          "contract": "Initializable",
+          "path": "zos-lib/contracts/Initializable.sol",
+          "label": "initialized",
+          "astId": 2617,
+          "type": "t_bool",
+          "src": "757:24:17"
+        },
+        {
+          "contract": "Initializable",
+          "path": "zos-lib/contracts/Initializable.sol",
+          "label": "initializing",
+          "astId": 2619,
+          "type": "t_bool",
+          "src": "876:25:17"
+        },
+        {
+          "contract": "Initializable",
+          "path": "zos-lib/contracts/Initializable.sol",
+          "label": "______gap",
+          "astId": 2668,
+          "type": "t_array:50<t_uint256>",
+          "src": "1891:29:17"
+        },
+        {
+          "contract": "Boomerang",
+          "path": "contracts/Boomerang.sol",
+          "label": "boomToken",
+          "astId": 14,
+          "type": "t_address",
+          "src": "280:31:0"
+        },
+        {
+          "contract": "Boomerang",
+          "path": "contracts/Boomerang.sol",
+          "label": "numReviews",
+          "astId": 16,
+          "type": "t_uint256",
+          "src": "349:22:0"
+        },
+        {
+          "contract": "Boomerang",
+          "path": "contracts/Boomerang.sol",
+          "label": "isActiveReview",
+          "astId": 20,
+          "type": "t_mapping<t_bool>",
+          "src": "378:43:0"
+        },
+        {
+          "contract": "Boomerang",
+          "path": "contracts/Boomerang.sol",
+          "label": "reviewTimeCreated",
+          "astId": 24,
+          "type": "t_mapping<t_uint256>",
+          "src": "428:46:0"
+        },
+        {
+          "contract": "Boomerang",
+          "path": "contracts/Boomerang.sol",
+          "label": "reviewBusiness",
+          "astId": 28,
+          "type": "t_mapping<t_address>",
+          "src": "526:46:0"
+        },
+        {
+          "contract": "Boomerang",
+          "path": "contracts/Boomerang.sol",
+          "label": "isBusinessWorker",
+          "astId": 34,
+          "type": "t_mapping<t_uint256>",
+          "src": "579:68:0"
+        },
+        {
+          "contract": "Boomerang",
+          "path": "contracts/Boomerang.sol",
+          "label": "reviewCustomer",
+          "astId": 38,
+          "type": "t_mapping<t_address>",
+          "src": "699:46:0"
+        },
+        {
+          "contract": "Boomerang",
+          "path": "contracts/Boomerang.sol",
+          "label": "reviewCustomerBoomReward",
+          "astId": 42,
+          "type": "t_mapping<t_uint256>",
+          "src": "756:53:0"
+        },
+        {
+          "contract": "Boomerang",
+          "path": "contracts/Boomerang.sol",
+          "label": "reviewCustomerXpReward",
+          "astId": 46,
+          "type": "t_mapping<t_uint256>",
+          "src": "820:51:0"
+        },
+        {
+          "contract": "Boomerang",
+          "path": "contracts/Boomerang.sol",
+          "label": "reviewWorker",
+          "astId": 50,
+          "type": "t_mapping<t_address>",
+          "src": "921:44:0"
+        },
+        {
+          "contract": "Boomerang",
+          "path": "contracts/Boomerang.sol",
+          "label": "reviewWorkerBoomReward",
+          "astId": 54,
+          "type": "t_mapping<t_uint256>",
+          "src": "976:51:0"
+        },
+        {
+          "contract": "Boomerang",
+          "path": "contracts/Boomerang.sol",
+          "label": "reviewWorkerXpReward",
+          "astId": 58,
+          "type": "t_mapping<t_uint256>",
+          "src": "1038:49:0"
+        },
+        {
+          "contract": "Boomerang",
+          "path": "contracts/Boomerang.sol",
+          "label": "businessCustomerXp",
+          "astId": 64,
+          "type": "t_mapping<t_uint256>",
+          "src": "1202:70:0"
+        },
+        {
+          "contract": "Boomerang",
+          "path": "contracts/Boomerang.sol",
+          "label": "businessWorkerXp",
+          "astId": 70,
+          "type": "t_mapping<t_uint256>",
+          "src": "1283:68:0"
+        }
+      ],
+      "warnings": {
+        "hasConstructor": false,
+        "hasSelfDestruct": false,
+        "hasDelegateCall": false,
+        "hasInitialValuesInDeclarations": false,
+        "uninitializedBaseContracts": []
+      }
+    },
+    "BoomerangToken": {
+      "address": "0x5b1869D9A4C187F2EAa108f3062412ecf0526b24",
+      "constructorCode": "608060405234801561001057600080fd5b506113e1806100206000396000f3fe",
+      "bodyBytecodeHash": "a55acc50dc2bd982871d99c65a174ac47537dd9760c567090c83ecbd04734b8d",
+      "localBytecodeHash": "d3e8091907ffc72f321daa7fa199f558263f8dbfca8b841dd060136b4a00089c",
+      "deployedBytecodeHash": "d3e8091907ffc72f321daa7fa199f558263f8dbfca8b841dd060136b4a00089c",
+      "types": {
+        "t_bool": {
+          "id": "t_bool",
+          "kind": "elementary",
+          "label": "bool"
+        },
+        "t_uint256": {
+          "id": "t_uint256",
+          "kind": "elementary",
+          "label": "uint256"
+        },
+        "t_array:50<t_uint256>": {
+          "id": "t_array:50<t_uint256>",
+          "valueType": "t_uint256",
+          "length": "50",
+          "kind": "array",
+          "label": "uint256[50]"
+        },
+        "t_mapping<t_uint256>": {
+          "id": "t_mapping<t_uint256>",
+          "valueType": "t_uint256",
+          "label": "mapping(key => uint256)",
+          "kind": "mapping"
+        }
+      },
+      "storage": [
+        {
+          "contract": "Initializable",
+          "path": "zos-lib/contracts/Initializable.sol",
+          "label": "initialized",
+          "astId": 2617,
+          "type": "t_bool",
+          "src": "757:24:17"
+        },
+        {
+          "contract": "Initializable",
+          "path": "zos-lib/contracts/Initializable.sol",
+          "label": "initializing",
+          "astId": 2619,
+          "type": "t_bool",
+          "src": "876:25:17"
+        },
+        {
+          "contract": "Initializable",
+          "path": "zos-lib/contracts/Initializable.sol",
+          "label": "______gap",
+          "astId": 2668,
+          "type": "t_array:50<t_uint256>",
+          "src": "1891:29:17"
+        },
+        {
+          "contract": "ERC20",
+          "path": "openzeppelin-eth/contracts/token/ERC20/ERC20.sol",
+          "label": "_balances",
+          "astId": 1674,
+          "type": "t_mapping<t_uint256>",
+          "src": "774:46:11"
+        },
+        {
+          "contract": "ERC20",
+          "path": "openzeppelin-eth/contracts/token/ERC20/ERC20.sol",
+          "label": "_allowed",
+          "astId": 1680,
+          "type": "t_mapping<t_uint256>",
+          "src": "827:66:11"
+        },
+        {
+          "contract": "ERC20",
+          "path": "openzeppelin-eth/contracts/token/ERC20/ERC20.sol",
+          "label": "_totalSupply",
+          "astId": 1682,
+          "type": "t_uint256",
+          "src": "900:28:11"
+        },
+        {
+          "contract": "ERC20",
+          "path": "openzeppelin-eth/contracts/token/ERC20/ERC20.sol",
+          "label": "______gap",
+          "astId": 2096,
+          "type": "t_array:50<t_uint256>",
+          "src": "7661:29:11"
+        }
+      ],
+      "warnings": {
+        "hasConstructor": false,
+        "hasSelfDestruct": false,
+        "hasDelegateCall": false,
+        "hasInitialValuesInDeclarations": false,
+        "uninitializedBaseContracts": []
+      }
+    }
+  },
+  "solidityLibs": {},
+  "proxies": {
+    "boomerang/BoomerangToken": [
+      {
+        "address": "0x254dffcd3277C0b1660F6d42EFbB754edaBAbC2B",
+        "version": "0.1.0",
+        "implementation": "0x5b1869D9A4C187F2EAa108f3062412ecf0526b24"
+      }
+    ],
+    "boomerang/Boomerang": [
+      {
+        "address": "0xC89Ce4735882C9F0f0FE26686c53074E09B0D550",
+        "version": "0.1.0",
+        "implementation": "0xe78A0F7E598Cc8b0Bb87894B0F60dD2a88d6a8Ab"
+      }
+    ]
+  },
+  "zosversion": "2.2",
+  "version": "0.1.0",
+  "proxyAdmin": {
+    "address": "0xCfEB869F69431e42cdB54A4F4f105C19C080A601"
+  }
+}

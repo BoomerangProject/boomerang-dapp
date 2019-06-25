@@ -54,6 +54,7 @@ class App extends Component {
         const accounts = await web3.eth.getAccounts();
         // Get the contract instance.
         const networkId = await web3.eth.net.getId();
+        console.log("Network ID" + networkId);
         const isMetaMask = web3.currentProvider.isMetaMask;
         let balance = accounts.length > 0 ? await web3.eth.getBalance(accounts[0]): web3.utils.toWei('0');
         balance = web3.utils.fromWei(balance, 'ether');
@@ -157,6 +158,7 @@ class App extends Component {
       fromBlock: 0,
       toBlock: 'latest'
     }, async (err, events) => {
+      console.log(events.length);
       for (var i=0; i<events.length;i++) {
         if (events[i].returnValues.customer === this.state.accounts[0]) {
           completedReviewIds.push(events[i].returnValues.reviewId);
@@ -165,11 +167,13 @@ class App extends Component {
     })
 
     let newReviews = [];
-    boomerang.getPastEvents('ReviewRequested', {
+    let allReviews = [];
+    await boomerang.getPastEvents('ReviewRequested', {
       fromBlock: 0,
       toBlock: 'latest'
     }, async (err, events) => {
       for (var i=0; i<events.length;i++) {
+        console.log(events[i]);
         if (events[i].returnValues.customer === this.state.accounts[0]) {
           if (!completedReviewIds.includes(events[i].returnValues.reviewId)) {
             newReviews.push(events[i]);

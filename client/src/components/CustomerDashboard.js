@@ -21,7 +21,6 @@ export default class CustomerDashboard extends Component {
   }
 
   render() {
-
     let message = <div></div>
     if (this.props.reviewRequests.length === 0) {
       message = <Header>You have no reviews to complete at this time.</Header>
