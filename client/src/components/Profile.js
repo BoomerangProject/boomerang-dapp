@@ -11,8 +11,7 @@ export default class Profile extends Component {
       activeItem: 'profile', 
       activeReviewItem: 'incoming',
       completedIncomingReviews: [],
-      completedIncomingReviews: []
-      }
+    }
     this.address = this.props.address;
     this.boomerang = this.props.boomerang;
   }
@@ -35,6 +34,7 @@ export default class Profile extends Component {
       fromBlock: 0,
       toBlock: 'latest'
     }, async (err, events) => {
+      console.log(events);
       for (var i=0; i<events.length;i++) {
         if (events[i].returnValues.business === this.props.address) {
           completedIncomingReviews.push(events[i]);

@@ -1,24 +1,11 @@
 import React, { Component } from "react";
 import ReviewRequestList from './ReviewRequestList'
 import { Header, 
-        Divider,
-        Segment,
-        Form,
-        Input,
-        Button,
-        TextArea,
-        Card,
-        Image,
-        Icon
+        Divider
 } from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 
 export default class CustomerDashboard extends Component {
-
-
-  constructor(props) {
-    super(props);
-  }
 
   render() {
     let message = <div></div>
