@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Icon, Menu, Header } from 'semantic-ui-react'
+import { Icon, Menu, Header, Container } from 'semantic-ui-react'
 import CompletedReviewList from './CompletedReviewList'
 import 'semantic-ui-css/semantic.min.css'
 
@@ -11,9 +11,25 @@ export default class Profile extends Component {
       activeItem: 'profile', 
       activeReviewItem: 'incoming',
       completedIncomingReviews: [],
+      address: this.props.address,
+      profileName: 'Unnamed',
+      profileDesc: 'No Description...'
     }
     this.address = this.props.address;
     this.boomerang = this.props.boomerang;
+  }
+
+  async componentDidMount(props) {
+    const response = await fetch('http://localhost:8393/emails/');
+    const myJson = await response.json();
+    const address = this.address;
+    let myObj = [];
+    Object.keys(myJson).forEach(function(e) {
+      if (myJson[e].ethaddr === address){
+        myObj = myJson[e];
+      }
+    })
+    this.setState({ profileName: myObj.name, profileDesc: myObj.desc })
   }
 
   handleItemClick = async (e, { name }) => {
@@ -83,21 +99,21 @@ export default class Profile extends Component {
         </Menu.Item>
 
         <Menu.Item
-          name='acheivments'
-          active={activeItem === 'acheivments'}
+          name='achievments'
+          active={activeItem === 'achievments'}
           onClick={this.handleItemClick}
         >
-          <Icon name='trophy' />
-          Acheivments
+          <Icon name='trophy'/>
+          Achievments
         </Menu.Item>
       </Menu>
       <div hidden={this.state.activeItem !== 'profile'}>
-        <Header as='h1'>   Your Profile (Unnamed)</Header>
-        <Header.Subheader>{this.address}</Header.Subheader>
+        <Header as='h1'> {this.state.profileName} </Header>
+        <Header.Subheader><b>{this.address}</b></Header.Subheader>
+        <Container text>{this.state.profileDesc}</Container>
       </div>
       <div hidden={this.state.activeItem !== 'reviews'}>
-        <Header as='h1'> Business Reviews </Header>
-        <Header.Subheader>{this.address}</Header.Subheader>
+        <Header as='h1'> {this.state.profileName} </Header>
         <Header.Subheader><font color="green">{this.state.positivePercent}% </font>positive feedback from {this.state.completedIncomingReviews.length} reviews</Header.Subheader>
         <Menu widths={2} fluid>
           <Menu.Item 
