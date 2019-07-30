@@ -229,7 +229,7 @@ class App extends Component {
   renderProfile() {
     return (
       <div className={styles.dashboard}>
-        <Profile web3={this.state.web3} address={this.state.option} boomerang={this.state.boomerang} />
+        <Profile web3={this.state.web3} userAddress={this.state.accounts[0]} address={this.state.option} boomerang={this.state.boomerang} />
       </div>
     );
   }
