@@ -17,11 +17,17 @@ export default class Profile extends Component {
       editedProfileName: 'Unnamed',
       editedProfileDesc: 'No Description...',
       editedProfileEmail: 'example@gmail.com',
-      modalOpen: false
+      editModalOpen: false,
+      requestModalOpen: false,
+      txDetails: '',
+      customerBoomReward: '0',
+      customerXpReward: '0',
     }
     this.userAddress = this.props.userAddress;
     this.address = this.props.address;
     this.boomerang = this.props.boomerang;
+    this.boomerangToken = this.props.boomerangToken;
+    this.approvedFunds = this.props.approvedFunds;
   }
 
   async componentDidMount(props) {
@@ -49,9 +55,11 @@ export default class Profile extends Component {
   }
 
 
-  handleOpen = () => this.setState({ modalOpen: true })
+  handleEditOpen = () => this.setState({ editModalOpen: true })
 
-  handleClose = () => this.setState({ modalOpen: false })
+  handleRequestOpen = () => this.setState({ requestModalOpen: true })
+
+  handleClose = () => this.setState({ editModalOpen: false, requestModalOpen: false })
 
   editProfile = async (e) => {
     var doesExist = false;
@@ -83,6 +91,28 @@ export default class Profile extends Component {
     }
   };
 
+  requestReview = async () => {
+    let tx = await this.boomerang.methods.requestBusinessReview(this.address, this.state.customerBoomReward, this.state.customerXpReward, this.state.txDetails).send({ from: this.userAddress });
+    window.toastProvider.addMessage('Processing transaction...', {
+      secondaryMessage: 'Check progress on Etherscan',
+      actionHref:
+        'https://etherscan.io/tx/' + tx.transactionHash,
+      actionText: 'Check',
+      variant: 'processing',
+    })
+  };
+
+  enableReviewRequests = async () => {
+    let tx = await this.boomerangToken.methods.approve(this.userAddress, this.props.web3.utils.toWei('10000000000')).send({ from: this.userAddress });
+    window.toastProvider.addMessage('Processing transaction...', {
+      secondaryMessage: 'Check progress on Etherscan',
+      actionHref:
+        'https://etherscan.io/tx/' + tx.transactionHash,
+      actionText: 'Check',
+      variant: 'processing',
+    })
+  };
+
   updateProfileName(event) {
     const profileName = event.target.value;
     this.setState({editedProfileName: profileName});
@@ -98,6 +128,22 @@ export default class Profile extends Component {
   updateProfileEmail(event) {
     const profileEmail = event.target.value;
     this.setState({editedProfileEmail: profileEmail});
+  }
+
+  updateTxDetails(event) {
+    const txDetails = event.target.value;
+    this.setState({txDetails: txDetails});
+  }
+
+  updateCustomerXpReward(event) {
+    const xpReward = event.target.value;
+    this.setState({customerXpReward: xpReward});
+  }
+
+  updateCustomerBoomReward(event) {
+    const boomReward = event.target.value;
+    this.setState({customerBoomReward: this.props.web3.utils.toWei(boomReward)});
+    console.log(this.props.web3.utils.toWei(boomReward))
   }
 
   handleItemClick = async (e, { name }) => {
@@ -203,9 +249,9 @@ export default class Profile extends Component {
                 <div hidden={this.userAddress !== this.address}>
                   <Modal 
                     size='small' 
-                    open={this.state.modalOpen} 
+                    open={this.state.editModalOpen} 
                     onClose={this.handleClose} 
-                    trigger={<Button onClick={this.handleOpen} color='green' basic>Edit Profile</Button>} 
+                    trigger={<Button onClick={this.handleEditOpen} color='green' basic>Edit Profile</Button>} 
                     centered={false}
                   >
                     <Modal.Header>Edit Profile</Modal.Header>
@@ -234,10 +280,42 @@ export default class Profile extends Component {
                     </Modal.Actions>
                   </Modal>
                 </div>
-                <div hidden={this.userAddress === this.address}>
-                  <Button color='green' basic>
-                    Request Review
-                  </Button>
+                <div hidden={this.userAddress === this.address || !this.approvedFunds}>
+                  <Modal 
+                    size='small' 
+                    open={this.state.requestModalOpen} 
+                    onClose={this.handleClose} 
+                    trigger={<Button onClick={this.handleRequestOpen} color='green' basic>Request Review</Button>} 
+                    centered={false}
+                  >
+                    <Modal.Header>Request Review from {this.state.profileName}</Modal.Header>
+                    <Modal.Content image>
+                     <Image src='https://www.seekpng.com/png/detail/365-3651600_default-portrait-image-generic-profile.png' wrapped size="medium"/>
+                      <Modal.Description>
+                        <Form fluid>
+                          <Form.Field>
+                            <label>XP Reward</label>
+                            <input onChange={(event) => this.updateCustomerXpReward(event)} placeholder='0' />
+                          </Form.Field>
+                          <Form.Field>
+                            <label>BOOM Token Reward</label>
+                            <input onChange={(event) => this.updateCustomerBoomReward(event)} placeholder='0' />
+                          </Form.Field>
+                          <Form.Field>
+                            <label>Transaction Details</label>
+                            <TextArea onChange={(event) => this.updateTxDetails(event)} placeholder='Transaction Details...' style={{ minHeight: 100 }} />
+                          </Form.Field>
+                        </Form>
+                      </Modal.Description>
+                    </Modal.Content>
+                    <Modal.Actions>
+                      <Button negative onClick={this.handleClose}>Cancel</Button>
+                      <Button positive icon='checkmark' labelPosition='right' content='Submit' onClick={this.requestReview}/>
+                    </Modal.Actions>
+                  </Modal>
+                </div>
+                <div hidden={this.userAddress === this.address || this.approvedFunds}>
+                  <Button onClick={this.enableReviewRequests} color='green' basic>Enable Review Requests</Button> 
                 </div>
               </div>
             </Card.Content>
