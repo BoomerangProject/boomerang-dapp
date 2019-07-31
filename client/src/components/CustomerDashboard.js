@@ -19,7 +19,7 @@ export default class CustomerDashboard extends Component {
         <Header.Subheader>Earn BOOMs by completing reviews</Header.Subheader>
         </Header>
         <Divider />
-        <ReviewRequestList web3={this.props.web3} accounts={this.props.accounts} boomerang={this.props.boomerang} reviewRequests={this.props.reviewRequests} />
+        <ReviewRequestList web3={this.props.web3} businessList={this.props.businessList} accounts={this.props.accounts} boomerang={this.props.boomerang} reviewRequests={this.props.reviewRequests} />
         {message}
       </div>
     )

@@ -19,7 +19,8 @@ class App extends Component {
     option:  urlParams.get('address'),
     boomBalance: 0,
     approvedFunds: false,
-    reviewRequests: []
+    reviewRequests: [],
+    businessList: []
   };
 
   getGanacheAddresses = async () => {
@@ -121,6 +122,7 @@ class App extends Component {
     if (boomerangInstance) {
       this.getReviewRequests();
     }
+    this.getBusinessList();
   }
 
 
@@ -146,6 +148,12 @@ class App extends Component {
     if (allowance > 0) {
       this.setState({ approvedFunds: true });
     }
+  }
+
+  getBusinessList = async () => {
+    const response = await fetch('http://localhost:8393/emails/');
+    const myJson = await response.json();
+    this.setState({ businessList: myJson });
   }
 
   getReviewRequests = async () => {
@@ -207,7 +215,8 @@ class App extends Component {
           web3={this.state.web3}
           boomerang={this.state.boomerang} 
           reviewRequests={this.state.reviewRequests} 
-          accounts={this.state.accounts} />
+          accounts={this.state.accounts}
+          businessList={this.state.businessList} />
       </div>
     );
   }
@@ -229,7 +238,7 @@ class App extends Component {
   renderProfile() {
     return (
       <div className={styles.dashboard}>
-        <Profile web3={this.state.web3} approvedFunds={this.state.approvedFunds} userAddress={this.state.accounts[0]} address={this.state.option} boomerang={this.state.boomerang} />
+        <Profile boomerangToken={this.state.boomerangToken} businessList={this.state.businessList} web3={this.state.web3} approvedFunds={this.state.approvedFunds} userAddress={this.state.accounts[0]} address={this.state.option} boomerang={this.state.boomerang} />
       </div>
     );
   }

@@ -8,17 +8,32 @@ class ReviewRequestItem extends Component {
     this.state = {
       boomReward: 0,
       xpReward: 0,
-      reviewText: ''
+      reviewText: '',
+      businessName: this.props.reviewRequest.returnValues.business.substring(0, 10) + '...',
+      profileURL: '/profile?address=' + this.props.reviewRequest.returnValues.business
     };
+    this.businessList = this.props.businessList;
     this.reviewId = this.props.reviewRequest.returnValues.reviewId;
     this.txDetails = this.props.reviewRequest.returnValues.txDetailsHash;
+    this.businessAddress = this.props.reviewRequest.returnValues.business;
     this.business = this.props.reviewRequest.returnValues.business.substring(0, 10) + '...';
+    console.log(this.props)
   }
 
   async componentDidMount() {
     const boomReward = await this.props.boomerang.methods.getCustomerBoomReward(this.reviewId).call();
     const xpReward = await this.props.boomerang.methods.getCustomerXpReward(this.reviewId).call();
-    this.setState({ boomReward: this.props.web3.utils.fromWei(boomReward), xpReward: xpReward });
+    const businessList = this.businessList;
+    const business = this.businessAddress;
+    let businessName = this.state.businessName;
+    Object.keys(businessList).forEach(function(e) {
+      if (businessList[e].ethaddr === business){
+        businessName = businessList[e].name;
+      }
+    })
+
+    this.setState({ boomReward: this.props.web3.utils.fromWei(boomReward), xpReward: xpReward, businessName: businessName });
+
   }
 
   submitReview = async (rating) => {
@@ -55,12 +70,12 @@ class ReviewRequestItem extends Component {
         <Card.Content>
           <Card.Header>Rate Your Experience:</Card.Header>
           <Card.Description>
-            <strong> {this.business} </strong> wants to know your opinion about a recent interaction: <br /> <strong>{this.txDetails}</strong>
+            <strong><a href={this.state.profileURL}> {this.state.businessName} </a></strong> wants to know your opinion about a recent interaction: <br /> <strong>{this.txDetails}</strong>
           </Card.Description>
         </Card.Content>
         <Card.Content>
           <Card.Description>
-            You will receive: <br /> <strong> {this.state.boomReward} BOOM <br /> {this.state.xpReward} xp </strong> with <strong>{this.business}</strong>
+            You will receive: <br /> <strong> {this.state.boomReward} BOOM <br /> {this.state.xpReward} xp </strong> with <strong>{this.state.businessName}</strong>
           </Card.Description>
         </Card.Content>
         <Card.Content>

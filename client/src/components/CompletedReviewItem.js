@@ -8,8 +8,13 @@ class CompletedReviewItem extends Component {
     this.state = {
       boomReward: 0,
       xpReward: 0,
-      reviewText: ''
+      reviewText: '',
+      businessName: this.props.completedReview.returnValues.business.substring(0, 10) + '...',
+      customerName: this.props.completedReview.returnValues.customer.substring(0, 10) + '...',
     };
+
+    this.businessList = this.props.businessList;
+
     this.reviewId = this.props.completedReview.returnValues.reviewId;
     this.review = this.props.completedReview.returnValues.reviewHash;
 
@@ -22,6 +27,26 @@ class CompletedReviewItem extends Component {
     this.rating = this.props.completedReview.returnValues.rating;
   }
 
+  async componentDidMount() {
+    const businessList = this.businessList;
+
+    const customer = this.props.completedReview.returnValues.customer;
+    let customerName = this.state.customerName;
+
+    const business = this.props.completedReview.returnValues.business;
+    let businessName = this.state.businessName;
+
+    Object.keys(businessList).forEach(function(e) {
+      if (businessList[e].ethaddr === business){
+        businessName = businessList[e].name;
+      } else if (businessList[e].ethaddr === customer) {
+        customerName = businessList[e].name;
+      }
+    })
+    this.setState({ businessName: businessName, customerName: customerName });
+  }
+
+
 
   render() {
 
@@ -32,9 +57,9 @@ class CompletedReviewItem extends Component {
       cardRating = <Card.Header><Icon name='smile outline' color='green' size='big'/></Card.Header>
     }
 
-    let cardContent = <Card.Content><Card.Header>Review from <a href={this.customerLink}>{this.customer}</a></Card.Header><Card.Description>{cardRating}<strong>{this.review}</strong></Card.Description></Card.Content>
+    let cardContent = <Card.Content><Card.Header>Review from <a href={this.customerLink}>{this.state.customerName}</a></Card.Header><Card.Description>{cardRating}<strong>{this.review}</strong></Card.Description></Card.Content>
     if (this.props.type === 'outgoing') {
-      cardContent = <Card.Content><Card.Header>Review of <a href={this.businessLink}>{this.business}</a></Card.Header><Card.Description>{cardRating}<strong>{this.review}</strong></Card.Description></Card.Content>
+      cardContent = <Card.Content><Card.Header>Review of <a href={this.businessLink}>{this.state.businessName}</a></Card.Header><Card.Description>{cardRating}<strong>{this.review}</strong></Card.Description></Card.Content>
     }
 
 

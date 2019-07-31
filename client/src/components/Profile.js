@@ -20,14 +20,13 @@ export default class Profile extends Component {
       editModalOpen: false,
       requestModalOpen: false,
       txDetails: '',
-      customerBoomReward: '0',
-      customerXpReward: '0',
+      customerBoomReward: '1',
+      customerXpReward: '1',
     }
     this.userAddress = this.props.userAddress;
     this.address = this.props.address;
     this.boomerang = this.props.boomerang;
     this.boomerangToken = this.props.boomerangToken;
-    this.approvedFunds = this.props.approvedFunds;
   }
 
   async componentDidMount(props) {
@@ -77,7 +76,6 @@ export default class Profile extends Component {
           headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
           body: JSON.stringify({"name": this.state.editedProfileName, "desc": this.state.editedProfileDesc})
       });
-      console.log(response);
       this.handleClose();
       window.location.reload();
     } else {
@@ -105,7 +103,7 @@ export default class Profile extends Component {
   enableReviewRequests = async () => {
     let tx = await this.boomerangToken.methods.approve(this.userAddress, this.props.web3.utils.toWei('10000000000')).send({ from: this.userAddress });
     window.toastProvider.addMessage('Processing transaction...', {
-      secondaryMessage: 'Check progress on Etherscan',
+      secondaryMessage: 'Reload page after completion to enable review requests.',
       actionHref:
         'https://etherscan.io/tx/' + tx.transactionHash,
       actionText: 'Check',
@@ -280,7 +278,7 @@ export default class Profile extends Component {
                     </Modal.Actions>
                   </Modal>
                 </div>
-                <div hidden={this.userAddress === this.address || !this.approvedFunds}>
+                <div hidden={this.userAddress === this.address || !this.props.approvedFunds}>
                   <Modal 
                     size='small' 
                     open={this.state.requestModalOpen} 
@@ -295,11 +293,11 @@ export default class Profile extends Component {
                         <Form fluid>
                           <Form.Field>
                             <label>XP Reward</label>
-                            <input onChange={(event) => this.updateCustomerXpReward(event)} placeholder='0' />
+                            <input onChange={(event) => this.updateCustomerXpReward(event)} placeholder='1' />
                           </Form.Field>
                           <Form.Field>
                             <label>BOOM Token Reward</label>
-                            <input onChange={(event) => this.updateCustomerBoomReward(event)} placeholder='0' />
+                            <input onChange={(event) => this.updateCustomerBoomReward(event)} placeholder='1' />
                           </Form.Field>
                           <Form.Field>
                             <label>Transaction Details</label>
@@ -314,7 +312,7 @@ export default class Profile extends Component {
                     </Modal.Actions>
                   </Modal>
                 </div>
-                <div hidden={this.userAddress === this.address || this.approvedFunds}>
+                <div hidden={this.userAddress === this.address || this.props.approvedFunds}>
                   <Button onClick={this.enableReviewRequests} color='green' basic>Enable Review Requests</Button> 
                 </div>
               </div>
@@ -336,10 +334,10 @@ export default class Profile extends Component {
           />
         </Menu>
         <div hidden={this.state.activeReviewItem !== 'incoming'}>
-          <CompletedReviewList type='incoming' boomerang={this.props.boomerang} completedReviews={this.state.completedIncomingReviews} />
+          <CompletedReviewList type='incoming' businessList={this.props.businessList} boomerang={this.props.boomerang} completedReviews={this.state.completedIncomingReviews} />
         </div>
         <div hidden={this.state.activeReviewItem !== 'outgoing'}>
-          <CompletedReviewList type='outgoing' boomerang={this.props.boomerang} completedReviews={this.state.completedOutgoingReviews} />
+          <CompletedReviewList type='outgoing' businessList={this.props.businessList} boomerang={this.props.boomerang} completedReviews={this.state.completedOutgoingReviews} />
         </div>
       </div>
       </div>

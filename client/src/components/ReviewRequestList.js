@@ -7,7 +7,7 @@ const ReviewRequestList = ((props) => {
   let reviewRequests = [];
   if (props.reviewRequests) {
     reviewRequests = props.reviewRequests.map((reviewRequest) => {
-      return <ReviewRequestItem key={reviewRequest.id} accounts={props.accounts} web3={props.web3} boomerang={props.boomerang} reviewRequest={reviewRequest} />
+      return <ReviewRequestItem key={reviewRequest.id} businessList={props.businessList} accounts={props.accounts} web3={props.web3} boomerang={props.boomerang} reviewRequest={reviewRequest} />
     })
   }
 
