@@ -12,7 +12,7 @@ const CompletedReviewList = ((props) => {
   }
 
   return (
-    <Card.Group>
+    <Card.Group style={{paddingLeft: '25%', paddingRight: '25%', paddingTop: '1%'}} >
       {completedReviews}
     </Card.Group>
   );

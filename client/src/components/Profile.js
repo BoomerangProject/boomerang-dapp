@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Icon, Menu, Header, Container, Button, Card, Image, Modal, TextArea, Form} from 'semantic-ui-react'
+import { Icon, Menu, Header, Container, Button, Card, Image, Modal, TextArea, Form, Divider} from 'semantic-ui-react'
 import CompletedReviewList from './CompletedReviewList'
 import 'semantic-ui-css/semantic.min.css'
 
@@ -11,6 +11,7 @@ export default class Profile extends Component {
       activeItem: 'profile', 
       activeReviewItem: 'incoming',
       completedIncomingReviews: [],
+      completedOutgoingReviews: [],
       address: this.props.address,
       profileName: 'Unnamed',
       profileDesc: 'No Description...',
@@ -22,6 +23,7 @@ export default class Profile extends Component {
       txDetails: '',
       customerBoomReward: '1',
       customerXpReward: '1',
+      userName: 'Unnamed'
     }
     this.userAddress = this.props.userAddress;
     this.address = this.props.address;
@@ -33,11 +35,15 @@ export default class Profile extends Component {
     const response = await fetch('http://localhost:8393/emails/');
     const myJson = await response.json();
     const address = this.address;
+    const userAddress = this.userAddress;
     let myObj = [];
+    let userName = "Unnamed";
     Object.keys(myJson).forEach(function(e) {
       if (myJson[e].ethaddr === address){
         myObj = myJson[e];
-      }
+      } else if (myJson[e].ethaddr === userAddress) {
+        userName = myJson[e].name;
+      } 
     })
     if (myObj.name){
       this.setState({ profileName: myObj.name, editedProfileName: myObj.name })
@@ -50,7 +56,7 @@ export default class Profile extends Component {
     if (myObj.desc) {
       this.setState({ profileDesc: myObj.desc, editedProfileDesc: myObj.desc })
     }
-    
+    this.setState({ userName: userName });
   }
 
 
@@ -98,10 +104,27 @@ export default class Profile extends Component {
       actionText: 'Check',
       variant: 'processing',
     })
+
+    var templateParams = {
+      boomReward: this.props.web3.utils.fromWei(this.state.customerBoomReward),
+      recipientEmail: this.state.email,
+      txDetails: this.state.txDetails,
+      xpReward: this.state.xpReward,
+      sender: this.state.userName
+    };
+ 
+    window.emailjs.send('mailgun', 'incoming_boomerang_review', templateParams)
+    .then(function(response) {
+       console.log('SUCCESS!', response.status, response.text);
+    }, function(error) {
+       console.log('FAILED...', error);
+    });
+
+    this.handleClose();
   };
 
   enableReviewRequests = async () => {
-    let tx = await this.boomerangToken.methods.approve(this.userAddress, this.props.web3.utils.toWei('10000000000')).send({ from: this.userAddress });
+    let tx = await this.boomerangToken.methods.approve(this.props.boomerangAddress, this.props.web3.utils.toWei('10000000000')).send({ from: this.userAddress });
     window.toastProvider.addMessage('Processing transaction...', {
       secondaryMessage: 'Reload page after completion to enable review requests.',
       actionHref:
@@ -230,9 +253,9 @@ export default class Profile extends Component {
           Rewards
         </Menu.Item>
       </Menu>
-      <div hidden={this.state.activeItem !== 'profile'}>
-          <Card>
-            <Image src='https://www.seekpng.com/png/detail/365-3651600_default-portrait-image-generic-profile.png' wrapped ui={false} />
+      <div style={{paddingLeft: '25%', paddingRight: '25%'}}  hidden={this.state.activeItem !== 'profile'}>
+          <Card fluid>
+            <Image src='https://www.seekpng.com/png/detail/365-3651600_default-portrait-image-generic-profile.png'/>
             <Card.Content>
               <Card.Header>{this.state.profileName}</Card.Header>
               <Card.Meta>
@@ -319,25 +342,50 @@ export default class Profile extends Component {
             </Card.Content>
           </Card>
       </div>
-      <div hidden={this.state.activeItem !== 'reviews'}>
+      <div hidden={this.state.activeItem !== 'reviews'} >
         <Header as='h1'> {this.state.profileName} </Header>
         <Header.Subheader><font color="green">{this.state.positivePercent}% </font>positive feedback from {this.state.completedIncomingReviews.length} reviews</Header.Subheader>
-        <Menu widths={2} fluid>
-          <Menu.Item 
-            name='incoming' 
-            active={activeReviewItem === 'incoming'} 
-            onClick={this.handleReviewItemClick} />
-          <Menu.Item
-            name='outgoing'
-            active={activeReviewItem === 'outgoing'}
-            onClick={this.handleReviewItemClick}
-          />
-        </Menu>
+        <Divider />
+        <div style={{paddingLeft: '25%', paddingRight: '25%'}} >
+          <Menu widths={2} floated>
+            <Menu.Item 
+              name='incoming' 
+              active={activeReviewItem === 'incoming'} 
+              onClick={this.handleReviewItemClick} />
+            <Menu.Item
+              name='outgoing'
+              active={activeReviewItem === 'outgoing'}
+              onClick={this.handleReviewItemClick}
+            />
+          </Menu>
+        </div>
         <div hidden={this.state.activeReviewItem !== 'incoming'}>
           <CompletedReviewList type='incoming' businessList={this.props.businessList} boomerang={this.props.boomerang} completedReviews={this.state.completedIncomingReviews} />
+          <div hidden={this.state.completedIncomingReviews.length !== 0}>
+            <Card.Group style={{paddingLeft: '25%', paddingRight: '25%', paddingTop: '1%'}}>
+              <Card fluid>
+              <Card.Content>
+                <Card.Description>
+                  There are no incoming reviews at this time.
+                </Card.Description>
+              </Card.Content>
+              </Card>
+            </Card.Group>
+          </div>
         </div>
         <div hidden={this.state.activeReviewItem !== 'outgoing'}>
           <CompletedReviewList type='outgoing' businessList={this.props.businessList} boomerang={this.props.boomerang} completedReviews={this.state.completedOutgoingReviews} />
+          <div hidden={this.state.completedOutgoingReviews.length !== 0}>
+            <Card.Group style={{paddingLeft: '25%', paddingRight: '25%', paddingTop: '1%'}}>
+              <Card fluid>
+              <Card.Content>
+                <Card.Description>
+                  There are no outgoing reviews at this time.
+                </Card.Description>
+              </Card.Content>
+              </Card>
+            </Card.Group>
+          </div>
         </div>
       </div>
       </div>

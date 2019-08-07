@@ -3,10 +3,10 @@ import Portis from '@portis/web3';
 
 const FALLBACK_WEB3_PROVIDER = process.env.REACT_APP_NETWORK || 'http://0.0.0.0:8545';
 
+require('dotenv').config();
 
 const getWeb3 = () =>
   new Promise((resolve, reject) => {
-
     const isProd = process.env.NODE_ENV === 'production';
     const isTestnet = process.env.NODE_ENV === 'ropsten';
     if (isProd) {

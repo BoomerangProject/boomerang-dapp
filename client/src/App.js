@@ -34,7 +34,6 @@ class App extends Component {
   }
 
   componentDidMount = async () => {
-
     // Load in contracts
     let Boomerang = {};
     let BoomerangToken = {};
@@ -165,9 +164,11 @@ class App extends Component {
       fromBlock: 0,
       toBlock: 'latest'
     }, async (err, events) => {
-      for (var i=0; i<events.length;i++) {
-        if (events[i].returnValues.customer === this.state.accounts[0]) {
-          completedReviewIds.push(events[i].returnValues.reviewId);
+      if (events) {
+        for (var i=0; i<events.length;i++) {
+          if (events[i].returnValues.customer === this.state.accounts[0]) {
+            completedReviewIds.push(events[i].returnValues.reviewId);
+          }
         }
       }
     })
@@ -216,7 +217,8 @@ class App extends Component {
           boomerang={this.state.boomerang} 
           reviewRequests={this.state.reviewRequests} 
           accounts={this.state.accounts}
-          businessList={this.state.businessList} />
+          businessList={this.state.businessList} 
+        />
       </div>
     );
   }
@@ -230,7 +232,8 @@ class App extends Component {
           boomerangAddress={this.state.boomerangAddress} 
           boomerangToken={this.state.boomerangToken} 
           accounts={this.state.accounts}
-          approvedFunds={this.state.approvedFunds} />
+          approvedFunds={this.state.approvedFunds} 
+        />
       </div>
     );
   }
@@ -238,7 +241,16 @@ class App extends Component {
   renderProfile() {
     return (
       <div className={styles.dashboard}>
-        <Profile boomerangToken={this.state.boomerangToken} businessList={this.state.businessList} web3={this.state.web3} approvedFunds={this.state.approvedFunds} userAddress={this.state.accounts[0]} address={this.state.option} boomerang={this.state.boomerang} />
+        <Profile 
+          boomerangToken={this.state.boomerangToken} 
+          businessList={this.state.businessList} 
+          web3={this.state.web3} 
+          approvedFunds={this.state.approvedFunds} 
+          userAddress={this.state.accounts[0]} 
+          address={this.state.option} 
+          boomerang={this.state.boomerang}
+          boomerangAddress={this.state.boomerangAddress} 
+         />
       </div>
     );
   }
