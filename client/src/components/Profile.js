@@ -217,7 +217,7 @@ export default class Profile extends Component {
   render() {
     const { activeItem, activeReviewItem } = this.state
     return (
-      <div>
+      <div style={{ width: '55%', margin: 'auto'}}>
       <Menu icon='labeled' fixed='bottom' horizontal>
         <Menu.Item name='profile' active={activeItem === 'profile'} onClick={this.handleItemClick}>
           <Icon name='user circle' />
@@ -346,7 +346,7 @@ export default class Profile extends Component {
         <Header as='h1'> {this.state.profileName} </Header>
         <Header.Subheader><font color="green">{this.state.positivePercent}% </font>positive feedback from {this.state.completedIncomingReviews.length} reviews</Header.Subheader>
         <Divider />
-        <div style={{paddingLeft: '25%', paddingRight: '25%'}} >
+        <div>
           <Menu widths={2} floated>
             <Menu.Item 
               name='incoming' 
@@ -362,7 +362,7 @@ export default class Profile extends Component {
         <div hidden={this.state.activeReviewItem !== 'incoming'}>
           <CompletedReviewList type='incoming' businessList={this.props.businessList} boomerang={this.props.boomerang} completedReviews={this.state.completedIncomingReviews} />
           <div hidden={this.state.completedIncomingReviews.length !== 0}>
-            <Card.Group style={{paddingLeft: '25%', paddingRight: '25%', paddingTop: '1%'}}>
+            <Card.Group>
               <Card fluid>
               <Card.Content>
                 <Card.Description>
@@ -376,7 +376,7 @@ export default class Profile extends Component {
         <div hidden={this.state.activeReviewItem !== 'outgoing'}>
           <CompletedReviewList type='outgoing' businessList={this.props.businessList} boomerang={this.props.boomerang} completedReviews={this.state.completedOutgoingReviews} />
           <div hidden={this.state.completedOutgoingReviews.length !== 0}>
-            <Card.Group style={{paddingLeft: '25%', paddingRight: '25%', paddingTop: '1%'}}>
+            <Card.Group>
               <Card fluid>
               <Card.Content>
                 <Card.Description>

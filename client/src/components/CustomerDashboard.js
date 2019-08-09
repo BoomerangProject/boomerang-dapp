@@ -14,7 +14,7 @@ export default class CustomerDashboard extends Component {
     }
 
     return (
-      <div>
+      <div style={{paddingLeft: '25%', paddingRight: '25%'}}>
         <Header as='h1'> Boomerang Dashboard
         <Header.Subheader>Earn BOOMs by completing reviews</Header.Subheader>
         </Header>

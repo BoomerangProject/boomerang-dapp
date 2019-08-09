@@ -34,6 +34,7 @@ class App extends Component {
   }
 
   componentDidMount = async () => {
+
     // Load in contracts
     let Boomerang = {};
     let BoomerangToken = {};
